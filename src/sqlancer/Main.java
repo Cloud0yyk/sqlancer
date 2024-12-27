@@ -564,6 +564,8 @@ public final class Main {
     public static int executeMain(String... args) throws AssertionError {
         List<DatabaseProvider<?, ?, ?>> providers = getDBMSProviders();
         Map<String, DBMSExecutorFactory<?, ?, ?>> nameToProvider = new HashMap<>();
+
+        // 命令行处理
         MainOptions options = new MainOptions();
         Builder commandBuilder = JCommander.newBuilder().addObject(options);
         for (DatabaseProvider<?, ?, ?> provider : providers) {
