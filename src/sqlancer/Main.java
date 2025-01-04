@@ -535,6 +535,7 @@ public final class Main {
 
         private O createCommand() {
             try {
+                // 生成数据库选项实例（DBMSSpecificOption)
                 return provider.getOptionClass().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new AssertionError(e);
@@ -563,14 +564,21 @@ public final class Main {
 
     public static int executeMain(String... args) throws AssertionError {
         List<DatabaseProvider<?, ?, ?>> providers = getDBMSProviders();
+        // String: name of the database
+        // DBMSExecutorFactory
+        // 1. databaseProvider & command (Command for database)
+        // 2. mainOptions
         Map<String, DBMSExecutorFactory<?, ?, ?>> nameToProvider = new HashMap<>();
 
         // 命令行处理
         MainOptions options = new MainOptions();
         Builder commandBuilder = JCommander.newBuilder().addObject(options);
         for (DatabaseProvider<?, ?, ?> provider : providers) {
+            // 数据库名字
             String name = provider.getDBMSName();
+            // 根据数据库生成执行工厂
             DBMSExecutorFactory<?, ?, ?> executorFactory = new DBMSExecutorFactory<>(provider, options);
+            // 添加到指令
             commandBuilder = commandBuilder.addCommand(name, executorFactory.getCommand());
             nameToProvider.put(name, executorFactory);
         }
