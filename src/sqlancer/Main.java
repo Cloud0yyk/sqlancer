@@ -594,6 +594,7 @@ public final class Main {
         if (options.printProgressInformation()) {
             startProgressMonitor();
             if (options.printProgressSummary()) {
+                // JVM退出时，执行的事情
                 Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
                     @Override
@@ -619,9 +620,11 @@ public final class Main {
             }
         }
 
+        // 线程池
         ExecutorService execService = Executors.newFixedThreadPool(options.getNumberConcurrentThreads());
         DBMSExecutorFactory<?, ?, ?> executorFactory = nameToProvider.get(jc.getParsedCommand());
 
+        // 测试数据库连接
         if (options.performConnectionTest()) {
             try {
                 executorFactory.getDBMSExecutor(options.getDatabasePrefix() + "connectiontest", new Randomly())
@@ -637,6 +640,7 @@ public final class Main {
 
         for (int i = 0; i < options.getTotalNumberTries(); i++) {
             final String databaseName = options.getDatabasePrefix() + i;
+            // 重置seed
             final long seed;
             if (options.getRandomSeed() == -1) {
                 seed = System.currentTimeMillis() + i;
