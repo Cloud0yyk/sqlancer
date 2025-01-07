@@ -434,6 +434,8 @@ public final class Main {
             state.setDatabaseName(databaseName);
             state.setMainOptions(options);
             state.setDbmsSpecificOptions(command);
+
+
             try (C con = provider.createDatabase(state)) {
                 QueryManager<C> manager = new QueryManager<>(state);
                 try {

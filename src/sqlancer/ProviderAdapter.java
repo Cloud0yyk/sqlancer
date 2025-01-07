@@ -49,7 +49,9 @@ public abstract class ProviderAdapter<G extends GlobalState<O, ? extends Abstrac
     @Override
     public Reproducer<G> generateAndTestDatabase(G globalState) throws Exception {
         try {
+            // 1. 产生数据库
             generateDatabase(globalState);
+            // 2. 测试视图（view）是否可用
             checkViewsAreValid(globalState);
             globalState.getManager().incrementCreateDatabase();
 
