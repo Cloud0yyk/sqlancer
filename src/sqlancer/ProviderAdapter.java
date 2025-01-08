@@ -53,8 +53,9 @@ public abstract class ProviderAdapter<G extends GlobalState<O, ? extends Abstrac
             generateDatabase(globalState);
             // 2. 测试视图（view）是否可用
             checkViewsAreValid(globalState);
+            // 3. 更新产生数据库的次数
             globalState.getManager().incrementCreateDatabase();
-
+            // 4. 生成测试标准
             TestOracle<G> oracle = getTestOracle(globalState);
             for (int i = 0; i < globalState.getOptions().getNrQueries(); i++) {
                 try (OracleRunReproductionState localState = globalState.getState().createLocalState()) {
@@ -84,9 +85,12 @@ public abstract class ProviderAdapter<G extends GlobalState<O, ? extends Abstrac
     protected TestOracle<G> getTestOracle(G globalState) throws Exception {
         List<? extends OracleFactory<G>> testOracleFactory = globalState.getDbmsSpecificOptions()
                 .getTestOracleFactory();
+        // 测试标准是否要求结果多于一行
         boolean testOracleRequiresMoreThanZeroRows = testOracleFactory.stream()
                 .anyMatch(OracleFactory::requiresAllTablesToContainRows);
+        // 用户是否要求结果多于一行
         boolean userRequiresMoreThanZeroRows = globalState.getOptions().testOnlyWithMoreThanZeroRows();
+        // 是否需要检查结果行数为0
         boolean checkZeroRows = testOracleRequiresMoreThanZeroRows || userRequiresMoreThanZeroRows;
         if (checkZeroRows && globalState.getSchema().containsTableWithZeroRows(globalState)) {
             if (globalState.getOptions().enableQPG()) {

@@ -47,6 +47,7 @@ public class SQLQueryAdapter extends Query<SQLConnection> {
         checkQueryString();
     }
 
+    // 规范化sql语言
     private String canonicalizeString(String s) {
         if (s.endsWith(";")) {
             return s;
