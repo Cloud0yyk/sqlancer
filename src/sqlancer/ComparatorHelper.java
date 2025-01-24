@@ -161,6 +161,29 @@ public final class ComparatorHelper {
         return secondResultSet;
     }
 
+    // method add by cloud
+    public static List<String> getCombinedResultSet(String firstQueryString, String secondQueryString, String thirdQueryString,
+                                                    String fourQueryString, String fiveQueryString,
+                                                    List<String> combinedString, boolean asUnion,
+                                                    SQLGlobalState<?, ?> state, ExpectedErrors errors) throws SQLException {
+        List<String> secondResultSet;
+        if (asUnion) {
+            String unionString = firstQueryString + " UNION ALL " + secondQueryString + " UNION ALL "
+                    + thirdQueryString + " UNION ALL " + fourQueryString + " EXCEPT ALL " + fiveQueryString;
+            combinedString.add(unionString);
+            secondResultSet = getResultSetFirstColumnAsString(unionString, errors, state);
+        } else {
+            secondResultSet = new ArrayList<>();
+            secondResultSet.addAll(getResultSetFirstColumnAsString(firstQueryString, errors, state));
+            secondResultSet.addAll(getResultSetFirstColumnAsString(secondQueryString, errors, state));
+            secondResultSet.addAll(getResultSetFirstColumnAsString(thirdQueryString, errors, state));
+            combinedString.add(firstQueryString);
+            combinedString.add(secondQueryString);
+            combinedString.add(thirdQueryString);
+        }
+        return secondResultSet;
+    }
+
     public static List<String> getCombinedResultSetNoDuplicates(String firstQueryString, String secondQueryString,
             String thirdQueryString, List<String> combinedString, boolean asUnion, SQLGlobalState<?, ?> state,
             ExpectedErrors errors) throws SQLException {

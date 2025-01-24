@@ -195,6 +195,19 @@ public class MySQLExpressionGenerator extends UntypedExpressionGenerator<MySQLEx
         return new MySQLUnaryPostfixOperation(expr, MySQLUnaryPostfixOperation.UnaryPostfixOperator.IS_NULL, false);
     }
 
+    // new method add by cloud
+    @Override
+    public MySQLExpression andPredicate(MySQLExpression predicateLeft, MySQLExpression predicateRight){
+        return new MySQLBinaryLogicalOperation(predicateLeft, predicateRight, MySQLBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public MySQLExpression orPredicate(MySQLExpression predicateLeft, MySQLExpression predicateRight){
+        return new MySQLBinaryLogicalOperation(predicateLeft, predicateRight, MySQLBinaryLogicalOperator.OR);
+    }
+
+
     @Override
     public List<MySQLExpression> generateOrderBys() {
         List<MySQLExpression> expressions = super.generateOrderBys();

@@ -38,11 +38,15 @@ public class MySQLToStringVisitor extends ToStringVisitor<MySQLExpression> imple
     @Override
     public void visit(MySQLSelect s) {
         sb.append("SELECT ");
+
+        // 添加注释
         if (s.getHint() != null) {
             sb.append("/*+ ");
             visit(s.getHint());
             sb.append("*/ ");
         }
+
+        // 过滤行
         switch (s.getFromOptions()) {
         case DISTINCT:
             sb.append("DISTINCT ");
@@ -56,10 +60,14 @@ public class MySQLToStringVisitor extends ToStringVisitor<MySQLExpression> imple
         default:
             throw new AssertionError();
         }
+
+
         sb.append(s.getModifiers().stream().collect(Collectors.joining(" ")));
         if (s.getModifiers().size() > 0) {
             sb.append(" ");
         }
+
+
         if (s.getFetchColumns() == null) {
             sb.append("*");
         } else {

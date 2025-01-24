@@ -25,4 +25,12 @@ public interface TLPWhereGenerator<S extends Select<J, E, T, C>, J extends Join<
     List<E> generateFetchColumns(boolean shouldCreateDummy);
 
     List<E> generateOrderBys();
+
+    default E andPredicate(E predicateLeft, E predicateRight){
+        return predicateLeft;
+    }
+
+    default E orPredicate(E predicateLeft, E predicateRight){
+        return predicateLeft;
+    }
 }
