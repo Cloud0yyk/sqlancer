@@ -161,7 +161,7 @@ public final class ComparatorHelper {
         return secondResultSet;
     }
 
-    // method add by cloud
+    // method add by cloud(Except all)
     public static List<String> getCombinedResultSet(String firstQueryString, String secondQueryString, String thirdQueryString,
                                                     String fourQueryString, String fiveQueryString,
                                                     List<String> combinedString, boolean asUnion,
