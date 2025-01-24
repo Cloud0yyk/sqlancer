@@ -63,6 +63,7 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
         }
     }
 
+    // newly add
     private class TLPWhereReproducerCloud implements Reproducer<G> {
         final String firstQueryString;
         final String secondQueryString;
