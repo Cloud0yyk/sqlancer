@@ -63,6 +63,46 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
         }
     }
 
+    private class TLPWhereReproducerCloud implements Reproducer<G> {
+        final String firstQueryString;
+        final String secondQueryString;
+        final String thirdQueryString;
+        final String fourQueryString;
+        final String fiveQueryString;
+        final String originalQueryString;
+        final List<String> resultSet;
+        final boolean orderBy;
+
+        TLPWhereReproducerCloud(String firstQueryString, String secondQueryString, String thirdQueryString,
+                           String fourQueryString, String fiveQueryString,
+                           String originalQueryString, List<String> resultSet, boolean orderBy) {
+            this.firstQueryString = firstQueryString;
+            this.secondQueryString = secondQueryString;
+            this.thirdQueryString = thirdQueryString;
+            this.fourQueryString = fourQueryString;
+            this.fiveQueryString = fiveQueryString;
+            this.originalQueryString = originalQueryString;
+            this.resultSet = resultSet;
+            this.orderBy = orderBy;
+        }
+
+        @Override
+        public boolean bugStillTriggers(G globalState) {
+            try {
+                List<String> combinedString1 = new ArrayList<>();
+                List<String> secondResultSet1 = ComparatorHelper.getCombinedResultSet(firstQueryString,
+                        secondQueryString, thirdQueryString, fourQueryString, fiveQueryString,
+                        combinedString1, !orderBy, globalState, errors);
+                ComparatorHelper.assumeResultSetsAreEqual(resultSet, secondResultSet1, originalQueryString,
+                        combinedString1, globalState);
+            } catch (AssertionError triggeredError) {
+                return true;
+            } catch (SQLException ignored) {
+            }
+            return false;
+        }
+    }
+
     public TLPWhereOracle(G state, TLPWhereGenerator<Z, J, E, T, C> gen, ExpectedErrors expectedErrors) {
         if (state == null || gen == null || expectedErrors == null) {
             throw new IllegalArgumentException("Null variables used to initialize test oracle.");
@@ -136,6 +176,7 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
         select.setFromList(gen.getTableRefs());
         select.setWhereClause(null);
 
+        // originalQueryString -> firstResultSet
         String originalQueryString = select.asString();
         generatedQueryString = originalQueryString;
         List<String> firstResultSet = ComparatorHelper.getResultSetFirstColumnAsString(originalQueryString, errors,
@@ -180,8 +221,9 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
         ComparatorHelper.assumeResultSetsAreEqual(firstResultSet, secondResultSet, originalQueryString, combinedString,
                 state);
 
-        reproducer = new TLPWhereReproducer(firstQueryString, secondQueryString, thirdQueryString, originalQueryString,
-                firstResultSet, orderBy);
+        reproducer = new TLPWhereReproducerCloud(firstQueryString, secondQueryString, thirdQueryString,
+                fourQueryString, fiveQueryString,
+                originalQueryString, firstResultSet, orderBy);
     }
 
     @Override

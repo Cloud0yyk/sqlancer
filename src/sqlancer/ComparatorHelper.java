@@ -177,9 +177,17 @@ public final class ComparatorHelper {
             secondResultSet.addAll(getResultSetFirstColumnAsString(firstQueryString, errors, state));
             secondResultSet.addAll(getResultSetFirstColumnAsString(secondQueryString, errors, state));
             secondResultSet.addAll(getResultSetFirstColumnAsString(thirdQueryString, errors, state));
+            secondResultSet.addAll(getResultSetFirstColumnAsString(fourQueryString, errors, state));
+            List<?> resultSetTmp = getResultSetFirstColumnAsString(fiveQueryString, errors, state);
+            for(var item: resultSetTmp){
+                secondResultSet.remove(item);
+            }
+
             combinedString.add(firstQueryString);
             combinedString.add(secondQueryString);
             combinedString.add(thirdQueryString);
+            combinedString.add(fourQueryString);
+            combinedString.add(fiveQueryString);
         }
         return secondResultSet;
     }
