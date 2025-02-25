@@ -138,28 +138,65 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
             select.setOrderByClauses(gen.generateOrderBys());
         }
 
-        // TLP partitioning
-        TestOracleUtils.PredicateVariants<E, C> predicates = TestOracleUtils.initializeTernaryPredicateVariants(gen,
+        /* old TLP method */
+//        TestOracleUtils.PredicateVariants<E, C> predicates = TestOracleUtils.initializeTernaryPredicateVariants(gen,
+//                gen.generateBooleanExpression());
+//
+//        select.setWhereClause(predicates.predicate);
+//        String firstQueryString = select.asString();
+//
+//        select.setWhereClause(predicates.negatedPredicate);
+//        String secondQueryString = select.asString();
+//
+//        select.setWhereClause(predicates.isNullPredicate);
+//        String thirdQueryString = select.asString();
+//
+//        List<String> combinedString = new ArrayList<>();
+//        List<String> secondResultSet = ComparatorHelper.getCombinedResultSet(firstQueryString, secondQueryString,
+//                thirdQueryString, combinedString, !orderBy, state, errors);
+//
+//        ComparatorHelper.assumeResultSetsAreEqual(firstResultSet, secondResultSet, originalQueryString, combinedString,
+//                state);
+//
+//        reproducer = new TLPWhereReproducer(firstQueryString, secondQueryString, thirdQueryString, originalQueryString,
+//                firstResultSet, orderBy);
+
+        /* new TLP methods */
+        TestOracleUtils.PredicateVariants<E, C> predicatesLeft = TestOracleUtils.initializeTernaryPredicateVariants(gen,
                 gen.generateBooleanExpression());
 
-        select.setWhereClause(predicates.predicate);
+        TestOracleUtils.PredicateVariants<E, C> predicatesRight = TestOracleUtils.initializeTernaryPredicateVariants(gen,
+                gen.generateBooleanExpression());
+
+        select.setWhereClause(predicatesLeft.predicate);
         String firstQueryString = select.asString();
 
-        select.setWhereClause(predicates.negatedPredicate);
+        select.setWhereClause(predicatesRight.predicate);
         String secondQueryString = select.asString();
 
-        select.setWhereClause(predicates.isNullPredicate);
+        select.setWhereClause(gen.isNull(gen.orPredicate(predicatesLeft.predicate, predicatesRight.predicate)));
         String thirdQueryString = select.asString();
 
+        // TODO: convert into nested query
+        select.setWhereClause(gen.andPredicate(predicatesLeft.negatedPredicate, predicatesRight.negatedPredicate));
+        String fourQueryString = select.asString();
+
+        // TODO: convert into natural join query
+        select.setWhereClause(gen.andPredicate(predicatesLeft.predicate, predicatesRight.predicate));
+        String fiveQueryString = select.asString();
+
         List<String> combinedString = new ArrayList<>();
+//        List<String> secondResultSet = ComparatorHelper.getCombinedResultSet(firstQueryString, secondQueryString,
+//                thirdQueryString, combinedString, !orderBy, state, errors);
         List<String> secondResultSet = ComparatorHelper.getCombinedResultSet(firstQueryString, secondQueryString,
-                thirdQueryString, combinedString, !orderBy, state, errors);
+                thirdQueryString, fourQueryString, fiveQueryString, combinedString, !orderBy, state, errors);
 
         ComparatorHelper.assumeResultSetsAreEqual(firstResultSet, secondResultSet, originalQueryString, combinedString,
                 state);
 
-        reproducer = new TLPWhereReproducer(firstQueryString, secondQueryString, thirdQueryString, originalQueryString,
-                firstResultSet, orderBy);
+        reproducer = new TLPWhereReproducerCloud(firstQueryString, secondQueryString, thirdQueryString,
+                fourQueryString, fiveQueryString,
+                originalQueryString, firstResultSet, orderBy);
     }
 
 
@@ -188,7 +225,7 @@ public class TLPWhereOracle<Z extends Select<J, E, T, C>, J extends Join<E, T, C
             select.setOrderByClauses(gen.generateOrderBys());
         }
 
-        // TLP partitioning
+        /* new TLP methods */
         TestOracleUtils.PredicateVariants<E, C> predicatesLeft = TestOracleUtils.initializeTernaryPredicateVariants(gen,
                 gen.generateBooleanExpression());
 
