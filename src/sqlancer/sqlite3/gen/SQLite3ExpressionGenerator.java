@@ -11,6 +11,8 @@ import sqlancer.common.gen.ExpressionGenerator;
 import sqlancer.common.gen.NoRECGenerator;
 import sqlancer.common.gen.TLPWhereGenerator;
 import sqlancer.common.schema.AbstractTables;
+import sqlancer.mysql.ast.MySQLBinaryLogicalOperation;
+import sqlancer.mysql.ast.MySQLExpression;
 import sqlancer.sqlite3.SQLite3GlobalState;
 import sqlancer.sqlite3.ast.SQLite3Aggregate;
 import sqlancer.sqlite3.ast.SQLite3Aggregate.SQLite3AggregateFunction;
@@ -130,6 +132,19 @@ public class SQLite3ExpressionGenerator implements ExpressionGenerator<SQLite3Ex
         gen.tryToGenerateKnownResult = true;
         return gen;
     }
+
+    // new method add by cloud
+    @Override
+    public SQLite3Expression andPredicate(SQLite3Expression  predicateLeft, SQLite3Expression  predicateRight){
+        return new Sqlite3BinaryOperation(predicateLeft, predicateRight, Sqlite3BinaryOperation.BinaryOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public SQLite3Expression  orPredicate(SQLite3Expression  predicateLeft, SQLite3Expression  predicateRight){
+        return new Sqlite3BinaryOperation(predicateLeft, predicateRight, Sqlite3BinaryOperation.BinaryOperator.OR);
+    }
+
 
     public static SQLite3Expression getRandomLiteralValue(SQLite3GlobalState globalState) {
         return new SQLite3ExpressionGenerator(globalState).getRandomLiteralValueInternal(globalState.getRandomly());

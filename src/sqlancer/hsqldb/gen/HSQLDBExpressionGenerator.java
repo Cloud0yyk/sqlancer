@@ -24,6 +24,8 @@ import sqlancer.hsqldb.ast.HSQLDBSelect;
 import sqlancer.hsqldb.ast.HSQLDBTableReference;
 import sqlancer.hsqldb.ast.HSQLDBUnaryPostfixOperation;
 import sqlancer.hsqldb.ast.HSQLDBUnaryPrefixOperation;
+import sqlancer.mysql.ast.MySQLBinaryLogicalOperation;
+import sqlancer.mysql.ast.MySQLExpression;
 
 public final class HSQLDBExpressionGenerator extends
         TypedExpressionGenerator<HSQLDBExpression, HSQLDBSchema.HSQLDBColumn, HSQLDBSchema.HSQLDBCompositeDataType>
@@ -56,6 +58,18 @@ public final class HSQLDBExpressionGenerator extends
     @Override
     public HSQLDBExpression isNull(HSQLDBExpression expr) {
         return new HSQLDBUnaryPostfixOperation(expr, HSQLDBUnaryPostfixOperation.HSQLDBUnaryPostfixOperator.IS_NULL);
+    }
+
+    // new method add by cloud
+    @Override
+    public HSQLDBExpression andPredicate(HSQLDBExpression predicateLeft, HSQLDBExpression predicateRight){
+        return new HSQLDBBinaryOperation(predicateLeft, predicateRight, HSQLDBBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public HSQLDBExpression orPredicate(HSQLDBExpression predicateLeft, HSQLDBExpression predicateRight){
+        return new HSQLDBBinaryOperation(predicateLeft, predicateRight, HSQLDBBinaryLogicalOperator.OR);
     }
 
     @Override

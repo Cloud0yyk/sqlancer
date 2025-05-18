@@ -34,6 +34,8 @@ import sqlancer.duckdb.ast.DuckDBPostFixText;
 import sqlancer.duckdb.ast.DuckDBSelect;
 import sqlancer.duckdb.ast.DuckDBTableReference;
 import sqlancer.duckdb.ast.DuckDBTernary;
+import sqlancer.tidb.ast.TiDBBinaryLogicalOperation;
+import sqlancer.tidb.ast.TiDBExpression;
 
 public final class DuckDBExpressionGenerator extends UntypedExpressionGenerator<DuckDBExpression, DuckDBColumn>
         implements NoRECGenerator<DuckDBSelect, DuckDBJoin, DuckDBExpression, DuckDBTable, DuckDBColumn>,
@@ -522,5 +524,18 @@ public final class DuckDBExpressionGenerator extends UntypedExpressionGenerator<
         }
         return Randomly.nonEmptySubset(columns).stream().map(c -> new DuckDBColumnReference(c))
                 .collect(Collectors.toList());
+    }
+
+
+    // new method add by cloud
+    @Override
+    public DuckDBExpression andPredicate(DuckDBExpression predicateLeft, DuckDBExpression predicateRight){
+        return new DuckDBBinaryOperator(predicateLeft, predicateRight, DuckDBBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public DuckDBExpression orPredicate(DuckDBExpression predicateLeft, DuckDBExpression predicateRight){
+        return new DuckDBBinaryOperator(predicateLeft, predicateRight, DuckDBBinaryLogicalOperator.OR);
     }
 }

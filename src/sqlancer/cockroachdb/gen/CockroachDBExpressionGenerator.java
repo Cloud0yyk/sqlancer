@@ -52,6 +52,8 @@ import sqlancer.common.gen.NoRECGenerator;
 import sqlancer.common.gen.TLPWhereGenerator;
 import sqlancer.common.gen.TypedExpressionGenerator;
 import sqlancer.common.schema.AbstractTables;
+import sqlancer.mysql.ast.MySQLBinaryLogicalOperation;
+import sqlancer.mysql.ast.MySQLExpression;
 
 public class CockroachDBExpressionGenerator extends
         TypedExpressionGenerator<CockroachDBExpression, CockroachDBColumn, CockroachDBCompositeDataType> implements
@@ -373,6 +375,18 @@ public class CockroachDBExpressionGenerator extends
     @Override
     public CockroachDBExpression isNull(CockroachDBExpression expr) {
         return new CockroachDBUnaryPostfixOperation(expr, CockroachDBUnaryPostfixOperator.IS_NULL);
+    }
+
+    // new method add by cloud
+    @Override
+    public CockroachDBExpression andPredicate(CockroachDBExpression predicateLeft, CockroachDBExpression predicateRight){
+        return new CockroachDBBinaryLogicalOperation(predicateLeft, predicateRight, CockroachDBBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public CockroachDBExpression orPredicate(CockroachDBExpression predicateLeft, CockroachDBExpression predicateRight){
+        return new CockroachDBBinaryLogicalOperation(predicateLeft, predicateRight, CockroachDBBinaryLogicalOperator.OR);
     }
 
     @Override

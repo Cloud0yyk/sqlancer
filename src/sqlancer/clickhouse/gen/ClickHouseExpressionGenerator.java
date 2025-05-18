@@ -35,6 +35,8 @@ import sqlancer.common.gen.NoRECGenerator;
 import sqlancer.common.gen.TLPWhereGenerator;
 import sqlancer.common.gen.TypedExpressionGenerator;
 import sqlancer.common.schema.AbstractTables;
+import sqlancer.mysql.ast.MySQLBinaryLogicalOperation;
+import sqlancer.mysql.ast.MySQLExpression;
 
 public class ClickHouseExpressionGenerator
         extends TypedExpressionGenerator<ClickHouseExpression, ClickHouseColumn, ClickHouseLancerDataType> implements
@@ -356,6 +358,18 @@ public class ClickHouseExpressionGenerator
     @Override
     public ClickHouseExpression isNull(ClickHouseExpression expr) {
         return new ClickHouseUnaryPostfixOperation(expr, ClickHouseUnaryPostfixOperator.IS_NULL, false);
+    }
+
+    // new method add by cloud
+    @Override
+    public ClickHouseExpression andPredicate(ClickHouseExpression predicateLeft, ClickHouseExpression predicateRight){
+        return new ClickHouseBinaryLogicalOperation(predicateLeft, predicateRight, ClickHouseBinaryLogicalOperation.ClickHouseBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public ClickHouseExpression orPredicate(ClickHouseExpression predicateLeft, ClickHouseExpression predicateRight){
+        return new ClickHouseBinaryLogicalOperation(predicateLeft, predicateRight, ClickHouseBinaryLogicalOperation.ClickHouseBinaryLogicalOperator.OR);
     }
 
     @Override

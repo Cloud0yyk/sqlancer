@@ -67,6 +67,8 @@ import sqlancer.postgres.ast.PostgresSelect.PostgresSubquery;
 import sqlancer.postgres.ast.PostgresSelect.SelectType;
 import sqlancer.postgres.ast.PostgresSimilarTo;
 import sqlancer.postgres.ast.PostgresTableReference;
+import sqlancer.tidb.ast.TiDBBinaryLogicalOperation;
+import sqlancer.tidb.ast.TiDBExpression;
 
 public class PostgresExpressionGenerator implements ExpressionGenerator<PostgresExpression>,
         NoRECGenerator<PostgresSelect, PostgresJoin, PostgresExpression, PostgresTable, PostgresColumn>,
@@ -651,6 +653,18 @@ public class PostgresExpressionGenerator implements ExpressionGenerator<Postgres
     @Override
     public PostgresExpression isNull(PostgresExpression expr) {
         return new PostgresPostfixOperation(expr, PostfixOperator.IS_NULL);
+    }
+
+    // new method add by cloud
+    @Override
+    public PostgresExpression andPredicate(PostgresExpression predicateLeft, PostgresExpression predicateRight){
+        return new PostgresBinaryLogicalOperation(predicateLeft, predicateRight, BinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public PostgresExpression orPredicate(PostgresExpression predicateLeft, PostgresExpression predicateRight){
+        return new PostgresBinaryLogicalOperation(predicateLeft, predicateRight, BinaryLogicalOperator.OR);
     }
 
     @Override

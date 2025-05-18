@@ -169,7 +169,7 @@ public final class ComparatorHelper {
         List<String> secondResultSet;
         if (asUnion) {
             String unionString = firstQueryString + " UNION ALL " + secondQueryString + " UNION ALL "
-                    + thirdQueryString + " UNION ALL " + fourQueryString + " EXCEPT ALL " + fiveQueryString;
+                    + thirdQueryString + " UNION ALL " + fourQueryString + " EXCEPT ALL " + fiveQueryString; // " EXCEPT ALL " + fiveQueryString;
             combinedString.add(unionString);
             secondResultSet = getResultSetFirstColumnAsString(unionString, errors, state);
         } else {

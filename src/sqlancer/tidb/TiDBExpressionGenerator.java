@@ -12,6 +12,8 @@ import sqlancer.common.gen.CERTGenerator;
 import sqlancer.common.gen.TLPWhereGenerator;
 import sqlancer.common.gen.UntypedExpressionGenerator;
 import sqlancer.common.schema.AbstractTables;
+import sqlancer.mysql.ast.MySQLBinaryLogicalOperation;
+import sqlancer.mysql.ast.MySQLExpression;
 import sqlancer.tidb.TiDBProvider.TiDBGlobalState;
 import sqlancer.tidb.TiDBSchema.TiDBColumn;
 import sqlancer.tidb.TiDBSchema.TiDBCompositeDataType;
@@ -250,6 +252,21 @@ public class TiDBExpressionGenerator extends UntypedExpressionGenerator<TiDBExpr
         return "EXPLAIN " + select.asString();
     }
 
+
+    // new method add by cloud
+    @Override
+    public TiDBExpression andPredicate(TiDBExpression predicateLeft, TiDBExpression predicateRight){
+        return new TiDBBinaryLogicalOperation(predicateLeft, predicateRight, TiDBBinaryLogicalOperator.AND);
+    }
+
+    // new method add by cloud
+    @Override
+    public TiDBExpression orPredicate(TiDBExpression predicateLeft, TiDBExpression predicateRight){
+        return new TiDBBinaryLogicalOperation(predicateLeft, predicateRight, TiDBBinaryLogicalOperator.OR);
+    }
+
+
+
     @Override
     public boolean mutate(TiDBSelect select) {
         List<Function<TiDBSelect, Boolean>> mutators = new ArrayList<>();
@@ -376,4 +393,7 @@ public class TiDBExpressionGenerator extends UntypedExpressionGenerator<TiDBExpr
         }
         return increase;
     }
+
+
+
 }
